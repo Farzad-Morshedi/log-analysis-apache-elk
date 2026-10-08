@@ -1,0 +1,7 @@
+filebeat.inputs:
+  - type: log
+    paths:
+      - /usr/share/filebeat/data/apache_logs.csv
+
+output.logstash:
+  hosts: ["logstash:5044"]
