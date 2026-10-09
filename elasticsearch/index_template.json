@@ -1,0 +1,21 @@
+{
+  "index_patterns": ["apache-logs"],
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "properties": {
+      "host": { "type": "ip" },
+      "time": { "type": "date" },
+      "method": { "type": "keyword" },
+      "url": { "type": "keyword" },
+      "response": { "type": "integer" },
+      "bytes": { "type": "integer" },
+      "geoip": {
+        "properties": {
+          "location": { "type": "geo_point" }
+        }
+      }
+    }
+  }
+}
