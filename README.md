@@ -1,130 +1,243 @@
-# Log Analysis Project — Apache Access Logs with ELK + Python
+# 🚀 NASA Web Log Analysis Project
 
-This project demonstrates a complete, end‑to‑end log analysis workflow using an open‑source stack. It ingests Apache access logs, parses them, stores them, analyzes them, and visualizes insights using Elasticsearch, Logstash, Kibana, and Python.
+A complete, reproducible ELK + Python log analysis pipeline using the NASA Kennedy Space Center HTTP logs (1995).
 
-The goal is to show how real operational logs can be transformed into meaningful analytics and dashboards using a reproducible, containerized pipeline designed for efficiency and clarity.
+This project demonstrates:
 
----
+* Real log ingestion
 
-## 1. Project Architecture
+* Real parsing
 
-This project uses the classic ELK pipeline architecture:
-```text
-    Filebeat → Logstash → Elasticsearch → Kibana
-                         ↓
-                       Python
+* Real indexing
+
+* Real dashboards
+
+* Real analytics
+
+* Real anomaly detection
+
+* Real reproducibility via Docker
+
+It is designed as a portfolio‑ready SOC / DevOps / Data Engineering project.
+
+## 📦 Project Architecture
+
+```
+┌──────────────┐
+│  apache log  │
+│ nasa_access  │
+└───────┬──────┘
+        │ Filebeat
+        ▼
+┌──────────────┐
+│   Logstash   │
+│ Grok Parser  │
+└───────┬──────┘
+        │
+        ▼
+┌──────────────┐
+│Elasticsearch │
+│   Indexing   │
+└───────┬──────┘
+        │
+        ▼
+┌──────────────┐
+│    Kibana    │
+│  Dashboards  │
+└──────────────┘
+
 ```
 
-* **Filebeat**: Ships raw log data efficiently into Logstash.
-* **Logstash**: Parses the CSV fields, converts data types, enriches IP addresses with GeoIP data, and sends structured documents into Elasticsearch.
-* **Elasticsearch**: Stores the parsed logs and provides a powerful, scalable search and aggregation engine.
-* **Kibana**: Visualizes the logs using interactive dashboards, charts, and geographical maps.
-* **Python (Pandas + Matplotlib)**: Performs deeper offline analytics such as traffic patterns, error rate analysis, top endpoints, GeoIP distribution, and bandwidth usage statistics.
+## 📁 Repository Structure
 
----
+log-analysis-project/
+├── data/
+│   └── apache_access.log
+├── filebeat/
+│   └── filebeat.yml
+├── logstash/
+│   └── pipeline.conf
+├── elasticsearch/
+│   └── index_template.json
+├── analytics/
+│   └── analysis.ipynb
+├── dashboards/
+│   ├── kibana.ndjson
+│   └── DASHBOARD_SPECIFICATIONS.md
+└── docker-compose.yml
 
-## 2. Dataset
+## 🐳 Running the Full ELK Stack
 
-This project uses the NASA Kennedy Space Center HTTP Logs, a well‑known public dataset frequently used in log‑analysis research, anomaly detection, and server traffic studies.
+1. Clone the repository:
+   git clone https://github.com//log-analysis-project.git
+   cd log-analysis-project
 
-### Dataset Source
-The dataset is publicly available on Kaggle:
-> [NASA HTTP Access Logs on Kaggle](https://www.kaggle.com/datasets/<your-dataset-link>)
+2. Start the ELK stack:
+   docker-compose up
 
-### Why the dataset is not stored in this repository
-The full dataset is approximately 31 MB, which exceeds standard GitHub file upload limits without auxiliary tools. Instead of storing the full file directly, this repository provides:
-* A direct link to download the full dataset
-* An optional sample file for quick local testing and pipeline verification
-* A fully containerized pipeline that functions seamlessly with either the sample or full dataset
+This launches:
 
-This design choice keeps the repository lightweight, performant, and completely avoids the complexity of Git LFS.
+* Elasticsearch
 
----
+* Kibana
 
-## 3. Repository Structure
-```txt
-    log-analysis-apache-elk/
-    ├── data/
-    │   └── sample_apache_logs.csv        # optional small sample dataset
-    ├── filebeat/
-    │   └── filebeat.yml                  # configuration for shipping logs to Logstash
-    ├── logstash/
-    │   └── pipeline.conf                 # CSV parsing and GeoIP filter rules
-    ├── elasticsearch/
-    │   └── index_template.json           # explicit field mappings and index settings
-    ├── analytics/
-    │   └── analysis.ipynb                # comprehensive Python Jupyter notebook
-    ├── dashboards/
-    │   └── kibana.ndjson                 # pre-built exported Kibana dashboards
-    ├── docker-compose.yml                # orchestration for the full ELK stack
-    └── README.md                         # project documentation
-```
+* Logstash
 
-Each dedicated folder encapsulates one specific component of the modular pipeline, making the overall project exceptionally easy to navigate, maintain, and reproduce across different environments.
+* Filebeat
 
----
+Filebeat immediately begins shipping the NASA log file into Logstash.
 
-## 4. CSV Log Format
+## 🔧 Logstash Pipeline Overview
 
-The dataset utilized in this project follows a clean comma-separated structure containing the following core attributes:
+The Logstash pipeline:
 
-    host,time,method,url,response,bytes
+* Parses Apache logs using GROK expressions designed for standard Common Log Format entries.
 
-### Field Meanings and Descriptions
-* **host** — The client IP address initiating the HTTP request.
-* **time** — The exact timestamp marking when the request was received.
-* **method** — The HTTP request method utilized (e.g., GET, POST, PUT, DELETE).
-* **url** — The specific requested resource path on the server.
-* **response** — The HTTP status code returned by the server (e.g., 200, 404, 500).
-* **bytes** — The total size of the server response payload measured in bytes.
+* Extracts essential metadata fields:
 
-These essential fields provide sufficient data granularity for comprehensive traffic analysis, error tracking, endpoint popularity ranking, GeoIP mapping, bandwidth monitoring, and security‑oriented investigations such as identifying scanning behavior or sudden status code spikes.
+  * host
 
----
+  * method
 
-## 5. How to Run the ELK Stack
+  * url
 
-### Prerequisites
-* Docker engine installed and running
-* Docker Compose utility
-* The dataset downloaded from Kaggle
+  * url_category
 
-### Execution Steps
-1. Place the acquired dataset file into the `data/` directory.
-2. Initialize and start the complete ELK stack containers:
-   `docker-compose up`
-3. Access the Kibana web interface in your browser:
-   `http://localhost:5601`
-4. Import the pre-configured dashboards from the `dashboards/kibana.ndjson` file.
-5. Launch and execute the Python notebook located in `analytics/analysis.ipynb` for advanced statistical evaluation.
+  * response
 
----
+  * bytes
 
-## 6. Python Analytics
+  * @timestamp
 
-The accompanying Python Jupyter notebook extends the telemetry capabilities by performing:
-* Advanced time‑series traffic analysis over custom windows
-* Comprehensive status code distribution breakdowns
-* Identification of top requested URLs and high-frequency client IPs
-* Statistical bandwidth and bytes distribution evaluations
-* Integrated GeoIP visualization maps
-* Error clustering and endpoint popularity rankings
+* Enriches network entries with GeoIP data to track client provenance.
 
-This offline analysis layer complements Kibana perfectly by providing flexible custom visualizations, data science libraries, and rigorous statistical metrics.
+* Outputs structured documents into the Elasticsearch index: nasa-logs
 
----
+Refer to the logstash/pipeline.conf configuration file for complete field mapping definitions and conditional filters.
 
-## 7. Future Improvements
+## 📊 Kibana Dashboards
 
-* Implement advanced user‑agent string parsing for device and browser analytics
-* Integrate HTTP referrer header analysis to track traffic origin pathways
-* Build automated anomaly detection rules for traffic spikes and malicious scanning patterns
-* Incorporate machine‑learning models for automated traffic classification
-* Introduce a secondary dataset such as SANS anonymized web logs for cross-comparison
-* Develop comparative dashboards to analyze behavioral shifts across different log corpuses
+Dashboards included:
 
----
+1. Traffic Over Time
 
-## 8. License
+   * Daily requests aggregation
 
-This project leverages public domain log data and industry-standard open‑source tools. All original configuration files and custom scripts in this repository are released under the terms of the MIT License.
+   * Hourly requests tracking
+
+2. Status Codes
+
+   * Distribution charts
+
+   * Time series progression
+
+3. URL Categories
+
+   * Category distribution metrics
+
+   * Category time series tracking
+
+4. Hosts
+
+   * Top client hosts ranking
+
+   * Host to status code mapping
+
+5. GeoIP
+
+   * Comprehensive world map of traffic origins
+
+Dashboard specifications are thoroughly documented in dashboards/DASHBOARD_SPECIFICATIONS.md.
+
+The actual dashboards are imported via:
+Kibana -> Stack Management -> Saved Objects -> Import -> kibana.ndjson
+
+## 📈 Python Analytics (analysis.ipynb)
+
+The Jupyter notebook performs:
+
+* Top hosts statistical evaluation
+
+* Top URLs tracking and popularity ranking
+
+* URL category breakdown analyses
+
+* Status code error evaluation
+
+* Daily and hourly traffic trend computations
+
+* Anomaly detection algorithms and threshold identification
+
+* Bandwidth utilization and byte-size distribution analysis
+
+* Host to URL correlation modeling
+
+* Host to status code correlation mapping
+
+* Time to URL mapping workflows
+
+* Time to status code mapping calculations
+
+This notebook mirrors the Kibana dashboards while providing deeper statistical depth and advanced exploratory data science routines using Pandas, NumPy, and Matplotlib libraries.
+
+## 🔥 Anomaly Detection Summary
+
+The historical NASA logs contain three major operational anomalies:
+
+1. Mid‑July rise: Normal organic traffic growth reflecting early internet adoption.
+
+2. Mid‑August spike: Real user activity surge driven by high-profile NASA space mission events.
+
+3. Late‑August collapse: A significant server logging outage and missing data period.
+
+These anomalies are clearly observable across daily and hourly traffic metrics, status code fluctuations, url categories, host activity patterns, and overall network bandwidth consumption.
+
+## 🌍 GeoIP Insights
+
+The historical dataset reveals telemetry originating from diverse network sectors across the globe:
+
+* Early commercial internet service providers such as AOL and Prodigy
+
+* Leading technology corporations including Motorola and Texas Instruments
+
+* Internal NASA infrastructure nodes and research laboratories
+
+* International academic networks and government institutions
+
+GeoIP mapping illustrates worldwide engagement with space exploration initiatives during the mid-1990s.
+
+## 🛠 Future Improvements
+
+* Threat intelligence feed enrichment pipelines for enhanced security context
+
+* User-agent string classification modules for device and browser tracking
+
+* Machine learning-based anomaly detection models for automated threat hunting
+
+* Automated ELK alerting rules for real-time notification events
+
+* Grafana dashboard integration alternatives for multi-platform telemetry
+
+* Kafka stream ingestion architecture for high-throughput scalability
+
+* Cloud deployment configurations targeting Elastic Cloud and AWS OpenSearch services
+
+## 📜 License
+
+This project utilizes public domain NASA server log data. All custom configuration files, automation scripts, and analytical notebooks in this repository are released under the terms of the MIT License.
+
+## 🎯 Final Notes
+
+This repository is engineered to be fully reproducible across modern containerized environments:
+
+1. Clone the repository to your local machine
+
+2. Execute docker-compose up to initialize the stack
+
+3. Import saved dashboard objects into Kibana
+
+4. Explore ingested log telemetry through pre-built visualizations
+
+5. Execute the analytics notebook for deep-dive statistical research
+
+It serves as a professional portfolio showcase for security operations center (SOC) analysts, DevOps engineers, and data engineering professionals looking to demonstrate full-stack telemetry capabilities.
