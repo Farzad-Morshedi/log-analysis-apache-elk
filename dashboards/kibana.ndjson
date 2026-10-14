@@ -1,3 +1,7 @@
-# This file will contain Kibana dashboards.
-# After running docker-compose, import dashboards via Kibana UI:
-# Stack Management → Saved Objects → Import
+# Placeholder Kibana dashboards file.
+# The actual dashboards will be exported from Kibana after running docker-compose.
+# Instructions:
+# 1. Run `docker-compose up` to start Elasticsearch + Kibana.
+# 2. In Kibana: Stack Management → Saved Objects → Import.
+# 3. Select the exported NDJSON file.
+# 4. Dashboards will appear under Analytics → Dashboard.
