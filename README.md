@@ -49,7 +49,7 @@ It is designed as a portfolio‑ready SOC / DevOps / Data Engineering project.
 ```
 
 ## 📁 Repository Structure
-
+```text
 log-analysis-project/
 ├── data/
 │   └── apache_access.log
@@ -65,6 +65,7 @@ log-analysis-project/
 │   ├── kibana.ndjson
 │   └── DASHBOARD_SPECIFICATIONS.md
 └── docker-compose.yml
+```
 
 ## 🐳 Running the Full ELK Stack
 
